@@ -1,0 +1,27 @@
+services:
+  database:
+    image: mysql:8.0
+    container_name: "poc_db"
+    volumes:
+      - ./db:/var/lib/mysql
+    env_file:
+      - .env.local
+    ports:
+      - "33061:3306"
+
+  backend:
+    container_name: "poc_backend"
+    env_file:
+      - .env.local
+    build:
+      context: ./
+    ports:
+      - 8080:8080
+      - 5005:5005
+    depends_on:
+      - database
+    volumes:
+      - ./:/app
+
+volumes:
+  db:
