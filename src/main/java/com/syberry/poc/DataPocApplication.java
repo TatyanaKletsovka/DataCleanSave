@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Slf4j
 @SpringBootApplication
-public class BackEndApplication {
+public class DataPocApplication {
     public static void main(String[] args) {
-        SpringApplication.run(BackEndApplication.class, args);
         log.info("The application is running");
+        SpringApplication.run(DataPocApplication.class, args);
     }
 }
