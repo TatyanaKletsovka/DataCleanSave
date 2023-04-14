@@ -1,8 +1,11 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
   datasource:
     url: 'jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_NAME}'
     username: '${DB_USER}'
@@ -10,12 +13,23 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   flyway:
     enabled: true
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
+  mvc:
+    format:
+      date-time: iso
+      date: iso
   mail:
     host: '${MAIL_HOST}'
     username: '${MAIL_USER}'
     protocol: smtp
     password: '${MAIL_PASSWORD}'
     port: '${MAIL_PORT}'
+server:
+  servlet:
+    context-path: /api/v1
 app:
   url: '${REACT_APP_API_URL}'
 email:
