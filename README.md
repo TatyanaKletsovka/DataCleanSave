@@ -3,7 +3,7 @@
 ## Environment:
 
 ```
-Language:   Java 19
+Language:   Java 17
 DB:         MySQL 8.0
 Deploy:     Docker 20.10.17
 ```
