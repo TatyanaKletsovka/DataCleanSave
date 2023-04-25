@@ -17,9 +17,9 @@
         <java.version>17</java.version>
         <junit.version>4.13.2</junit.version>
         <site.version>3.7.1</site.version>
-        <reports.version>3.0.0</reports.version>
+        <reports.version>3.4.3</reports.version>
         <checkstyle.version>3.2.1</checkstyle.version>
-        <pmd.version>3.20.0</pmd.version>
+        <pmd.version>3.18.0</pmd.version>
         <jwt.version>0.9.1</jwt.version>
         <jackson.version>2.14.0</jackson.version>
         <jsonassert.version>1.5.0</jsonassert.version>
@@ -90,10 +90,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
@@ -101,10 +97,6 @@
             <artifactId>jsonassert</artifactId>
             <version>${jsonassert.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
         </dependency>
     </dependencies>
 
@@ -114,6 +106,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>com.syberry.poc.DataPocApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -145,6 +138,16 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${reports.version}</version>
             </plugin>
         </plugins>
         <testResources>
