@@ -11,4 +11,4 @@ RUN mvn clean package
 COPY . /app
 RUN chmod +x ./mvnw
 
-ENTRYPOINT ["java", "-jar", "/app/target/poc-0.0.1-SNAPSHOT.jar", "com.syberry.poc.DataPocApplication"]
+CMD ["java", "-jar", "/app/target/poc-0.0.1-SNAPSHOT.jar"]
