@@ -1,14 +1,12 @@
-FROM maven:3.9.0-eclipse-temurin-17-focal
-
-WORKDIR /app
-
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y dos2unix
-
-COPY mvnw pom.xml ./
-RUN mvn -N io.takari:maven:wrapper
+FROM maven:3.9.0 AS MAVEN_BUILD
+COPY pom.xml /build/
+COPY src /build/src/
+WORKDIR /build/
 RUN mvn clean package
-COPY . /app
-RUN chmod +x ./mvnw
 
-CMD ["java", "-jar", "/app/target/poc-0.0.1-SNAPSHOT.jar"]
+FROM openjdk:17
+ENV TZ="Europe/Minsk"
+RUN date && mkdir /opt/app/
+WORKDIR /opt/app
+COPY --from=MAVEN_BUILD /build/target/poc-0.0.1-SNAPSHOT.jar /opt/app/app.jar
+CMD ls /opt/app && java -jar /opt/app/app.jar
