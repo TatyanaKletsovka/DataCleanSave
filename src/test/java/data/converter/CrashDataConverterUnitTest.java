@@ -14,15 +14,23 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @ExtendWith(MockitoExtension.class)
 public class CrashDataConverterUnitTest {
     @InjectMocks
     private DataConverter dataConverter;
-    private CrashData crashData = new CrashData();
-    private CrashDataDto crashDataDto = new CrashDataDto();
-    private Document document = new Document(123L, LocalDateTime.now(), new User(), 3 );
+    private final Map<String, String> crashDataRecord = new HashMap<>();
+    private final List<Map<String, String>> crashDataRecords = new ArrayList<>();
+    private final List<CrashData> crashDataEntities = new ArrayList<>();
+    private final CrashData crashData = new CrashData();
+    private final CrashDataDto crashDataDto = new CrashDataDto();
+    private final Document document = new Document(123L, LocalDateTime.now(), new User(), 3 );
     @BeforeEach
     public void setUp() {
         Long id = 123456789L;
@@ -30,6 +38,8 @@ public class CrashDataConverterUnitTest {
         int month = 4;
         int day = 27;
         int hour = 14;
+        String weekend = "weekend";
+        String injuryType = "fatal";
         String collisionType = "Rear-end";
         String primaryFactor = "Distracted driving";
         String reportedLocation = "123 Main Street";
@@ -63,6 +73,21 @@ public class CrashDataConverterUnitTest {
         crashDataDto.setLatitude(latitude);
         crashDataDto.setLongitude(longitude);
         crashDataDto.setDocumentId(123L);
+
+        crashDataRecord.put("year", Integer.toString(year));
+        crashDataRecord.put("month", Integer.toString(month));
+        crashDataRecord.put("day", Integer.toString(day));
+        crashDataRecord.put("hour", Integer.toString(hour));
+        crashDataRecord.put("weekend", weekend);
+        crashDataRecord.put("injury_type", injuryType);
+        crashDataRecord.put("collision_type", collisionType);
+        crashDataRecord.put("primary_factor", primaryFactor);
+        crashDataRecord.put("reported_location", reportedLocation);
+        crashDataRecord.put("latitude", Float.toString(latitude));
+        crashDataRecord.put("longitude", Float.toString(longitude));
+
+        crashDataRecords.add(crashDataRecord);
+        crashDataEntities.add(crashData);
     }
         @Test
         public void should_SuccessfullyConvertCrashDataToCrashDataDto() {
@@ -70,5 +95,13 @@ public class CrashDataConverterUnitTest {
                     .usingRecursiveComparison()
                     .ignoringFieldsOfTypes()
                     .isEqualTo(crashDataDto);
+        }
+
+        @Test
+        public void should_SuccessfullyConvertDocumentDataToCrashDataEntities() {
+            assertThat(dataConverter.convertToCrashDataList(crashDataRecords, document))
+                    .usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(crashDataEntities);
         }
 }

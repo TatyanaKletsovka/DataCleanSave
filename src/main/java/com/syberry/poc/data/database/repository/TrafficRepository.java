@@ -15,7 +15,6 @@ public interface TrafficRepository extends JpaRepository<Traffic, Long> {
    * Finds a traffic data by its id and throws an EntityNotFoundException if it does not exist.
    *
    * @param id the id of the traffic data to find
-   * @return the traffic data if it exists
    * @throws EntityNotFoundException if the traffic data with this id does not exist
    */
   default void findByIdIfExists(Long id) {

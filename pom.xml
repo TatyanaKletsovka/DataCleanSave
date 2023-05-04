@@ -24,6 +24,7 @@
         <jackson.version>2.14.0</jackson.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <jacoco.version>0.8.8</jacoco.version>
+        <common-csv.version>1.10.0</common-csv.version>
     </properties>
     <dependencies>
         <dependency>
@@ -97,6 +98,11 @@
             <artifactId>jsonassert</artifactId>
             <version>${jsonassert.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>${common-csv.version}</version>
         </dependency>
     </dependencies>
 
