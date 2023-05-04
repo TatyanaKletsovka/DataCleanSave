@@ -45,7 +45,7 @@ public class UserConverterUnitTest {
     String email = "john@email.com";
     String roleName = "user";
     LocalDateTime createdAt = LocalDateTime.now();
-    boolean enabled = false;
+    boolean enabled = true;
 
     user.setId(id);
     user.setFirstName(firstName);
@@ -70,7 +70,6 @@ public class UserConverterUnitTest {
     userDto.setRoleName(RoleName.USER);
     userDto.setCreatedAt(createdAt);
     userDto.setEnabled(enabled);
-
   }
 
   @Test
@@ -95,5 +94,4 @@ public class UserConverterUnitTest {
         .usingRecursiveComparison()
         .isEqualTo(userDto);
   }
-
 }

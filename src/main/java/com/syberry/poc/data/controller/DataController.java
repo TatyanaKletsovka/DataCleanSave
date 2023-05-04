@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,6 +89,7 @@ public class DataController {
    */
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/traffic/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public void deleteTrafficById(@PathVariable("id") Long id) {
     log.info("DELETE-request: deleting traffic data by id: {}", id);
     dataService.deleteTrafficById(id);
@@ -100,6 +102,7 @@ public class DataController {
    */
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/pedestrian-and-bicyclist/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public void deletePedestrianAndBicyclistById(@PathVariable("id") Long id) {
     log.info("DELETE-request: deleting pedestrian and bicyclist data by id: {}", id);
     dataService.deletePedestrianAndBicyclistById(id);
@@ -112,6 +115,7 @@ public class DataController {
    */
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/crash-data/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public void deleteCrashDataById(@PathVariable("id") Long id) {
     log.info("DELETE-request: deleting crash data by id: {}", id);
     dataService.deleteCrashDataById(id);
@@ -124,6 +128,7 @@ public class DataController {
    */
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/traffic/document/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public void deleteTrafficByDocumentId(@PathVariable("id") Long id) {
     log.info("DELETE-request: deleting traffic data by id: {}", id);
     dataService.deleteTrafficByDocumentId(id);
@@ -136,6 +141,7 @@ public class DataController {
    */
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/pedestrian-and-bicyclist/document/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public void deletePedestrianAndBicyclistByDocumentId(@PathVariable("id") Long id) {
     log.info("DELETE-request: deleting pedestrian and bicyclist data by document id: {}", id);
     dataService.deletePedestrianAndBicyclistByDocumentId(id);
@@ -148,6 +154,7 @@ public class DataController {
    */
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/crash-data/document/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public void deleteCrashDataByDocumentId(@PathVariable("id") Long id) {
     log.info("DELETE-request: deleting crash data by document id: {}", id);
     dataService.deleteCrashDataByDocumentId(id);
@@ -155,6 +162,7 @@ public class DataController {
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/csv")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public UploadReportDto processCsv(@RequestParam("file") MultipartFile file) {
     log.info("POST-request: uploading document");
     return csvProcessingService.processCsvDocument(file);

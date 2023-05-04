@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,7 @@ public class UserController {
    *     based on the provided filter and page parameters.
    */
   @GetMapping
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public Page<UserDto> findAllUsers(UserFilter filter, Pageable pageable) {
     log.info("GET-request: getting all users");
     return service.findAllUsers(filter, pageable);
@@ -57,6 +59,7 @@ public class UserController {
    * @return the user with the specified ID
    */
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public UserDto findUserById(@PathVariable("id") Long id) {
     log.info("GET-request: getting user with id: {}", id);
     return service.findUserById(id);
@@ -81,6 +84,7 @@ public class UserController {
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public UserDto createUser(@Valid @RequestBody UserCreationDto dto) {
     log.info("POST-request: creating new user");
     return service.createUser(dto);
@@ -94,6 +98,7 @@ public class UserController {
    * @return the updated user
    */
   @PutMapping("/{id}")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public UserDto updateUserById(@PathVariable("id") Long id,
                                 @Valid @RequestBody UserUpdatingDto dto) {
     log.info("PUT-request: updating user with id: {}", id);
@@ -108,6 +113,7 @@ public class UserController {
    * @return the updated user
    */
   @PutMapping("/{id}/disabled")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public UserDto disableUserById(@PathVariable("id") Long id) {
     log.info("PUT-request: reverse is user disabled for user with id: {}", id);
     return service.disableUserById(id);
@@ -120,6 +126,7 @@ public class UserController {
    * @return the updated user
    */
   @PutMapping("/{id}/admin")
+  @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
   public UserDto switchAdminRoleById(@PathVariable("id") Long id) {
     log.info("PUT-request: reverse admin role for user with id: {}", id);
     return service.switchAdminRoleById(id);

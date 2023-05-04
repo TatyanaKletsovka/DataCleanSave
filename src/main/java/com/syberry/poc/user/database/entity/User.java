@@ -51,5 +51,5 @@ public class User {
   private LocalDateTime updatedAt;
   private LocalDateTime disabledAt;
   @Builder.Default
-  private boolean enabled = false;
+  private boolean enabled = true;
 }
