@@ -1,5 +1,7 @@
 package com.syberry.poc.user.validation;
 
+import static com.syberry.poc.authorization.util.SecurityUtils.getUserDetails;
+
 import com.syberry.poc.exception.ValidationException;
 import com.syberry.poc.user.database.entity.User;
 import com.syberry.poc.user.database.repository.UserRepository;
@@ -7,6 +9,7 @@ import com.syberry.poc.user.dto.PasswordUpdatingDto;
 import com.syberry.poc.user.dto.enums.RoleName;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserValidator {
 
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
   /**
    * Validates if the given email is already taken
@@ -60,16 +64,15 @@ public class UserValidator {
    * Validates if passwords are not equals
    * and oldPassword are equals user password.
    *
-   * @param user the user to validate
    * @param dto passwords to validate
    * @throws ValidationException if passwords are equals
    * @throws ValidationException if oldPassword are not equals user password
    */
-  public void validatePassword(User user, PasswordUpdatingDto dto) {
+  public void validatePassword(PasswordUpdatingDto dto) {
     if (Objects.equals(dto.getOldPassword(), dto.getNewPassword())) {
       throw new ValidationException("New password shouldn't be the same as an old password");
     }
-    if (!Objects.equals(user.getPassword(), dto.getOldPassword())) {
+    if (!passwordEncoder.matches(dto.getOldPassword(), getUserDetails().getPassword())) {
       throw new ValidationException("Old password is incorrect");
     }
   }

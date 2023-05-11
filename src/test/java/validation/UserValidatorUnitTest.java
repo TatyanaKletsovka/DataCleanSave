@@ -1,5 +1,6 @@
 package validation;
 
+import com.syberry.poc.authorization.security.UserDetailsImpl;
 import com.syberry.poc.exception.ValidationException;
 import com.syberry.poc.user.database.entity.Role;
 import com.syberry.poc.user.database.entity.User;
@@ -15,6 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,6 +35,12 @@ public class UserValidatorUnitTest {
   private UserValidator validator;
   @Mock
   private UserRepository repository;
+  @Mock
+  private SecurityContext securityContext;
+  @Mock
+  private Authentication authentication;
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
   private final String email = "example@gmail.com";
   private final String oldPassword = "password";
@@ -40,6 +52,14 @@ public class UserValidatorUnitTest {
     user.setId(2L);
     user.setEmail(email);
     user.setPassword(oldPassword);
+
+    when(passwordEncoder.matches(anyString(), anyString()))
+        .thenReturn(true);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    SecurityContextHolder.setContext(securityContext);
+    when(authentication.getPrincipal()).thenReturn(new UserDetailsImpl(1L, "super_admin@gmail.com",
+        oldPassword, true,
+        new SimpleGrantedAuthority(RoleName.ADMIN.name())));
   }
 
   @Test
@@ -80,18 +100,18 @@ public class UserValidatorUnitTest {
 
   @Test
   public void should_SuccessfullyValidatePasswords() {
-    assertDoesNotThrow(() -> validator.validatePassword(user, new PasswordUpdatingDto(oldPassword, newPassword)));
+    validator.validatePassword(new PasswordUpdatingDto(oldPassword, newPassword));
   }
 
   @Test
   public void should_ThrowError_When_NewPasswordEqualsOldPassword() {
     assertThrows(ValidationException.class,
-        () -> validator.validatePassword(user, new PasswordUpdatingDto(oldPassword, oldPassword)));
+        () -> validator.validatePassword(new PasswordUpdatingDto(oldPassword, oldPassword)));
   }
 
   @Test
   public void should_ThrowError_When_NewPasswordNotEqualsUserPassword() {
     assertThrows(ValidationException.class,
-        () -> validator.validatePassword(user, new PasswordUpdatingDto(newPassword, newPassword)));
+        () -> validator.validatePassword(new PasswordUpdatingDto(newPassword, newPassword)));
   }
 }

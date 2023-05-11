@@ -45,6 +45,8 @@ public class GlobalExceptionHandler extends Exception {
    * @return an HTTP response entity containing the errors
    */
   @ExceptionHandler({
+      TokenRefreshException.class,
+      EmailException.class,
       PermissionException.class
   })
   public final ResponseEntity<Map<String, List<String>>> permissionExceptionHandler(Exception ex) {

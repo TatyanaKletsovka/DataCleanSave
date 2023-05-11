@@ -1,5 +1,7 @@
 package com.syberry.poc.user.service.impl;
 
+import static com.syberry.poc.authorization.util.SecurityUtils.getUserDetails;
+
 import com.syberry.poc.user.converter.RoleConverter;
 import com.syberry.poc.user.converter.UserConverter;
 import com.syberry.poc.user.database.entity.User;
@@ -14,10 +16,12 @@ import com.syberry.poc.user.service.UserService;
 import com.syberry.poc.user.specification.UserSpecification;
 import com.syberry.poc.user.validation.UserValidator;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,6 +36,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository repository;
   private final UserValidator validator;
   private final UserSpecification specification;
+  private final PasswordEncoder passwordEncoder;
 
   /**
    * Finds a page of users based on the filter and page parameters.
@@ -65,8 +70,7 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   public UserDto findUserProfile() {
-    // TODO: add realization in authorization feature
-    return null;
+    return converter.convertToUserDto(repository.findByIdIfExists(getUserDetails().getId()));
   }
 
   /**
@@ -79,8 +83,7 @@ public class UserServiceImpl implements UserService {
   public UserDto createUser(UserCreationDto dto) {
     validator.validateEmail(dto.getEmail());
     User user = converter.convertToEntity(dto);
-    // TODO: add realization in authorization feature
-    user.setPassword("password");
+    user.setPassword(UUID.randomUUID().toString());
     return converter.convertToUserDto(repository.save(user));
   }
 
@@ -142,6 +145,8 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void updatePassword(PasswordUpdatingDto dto) {
-    // TODO: add realization in authorization feature
+    User user = repository.findByIdIfExists(getUserDetails().getId());
+    validator.validatePassword(dto);
+    user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
   }
 }
