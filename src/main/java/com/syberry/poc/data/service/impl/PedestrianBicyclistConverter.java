@@ -2,6 +2,7 @@ package com.syberry.poc.data.service.impl;
 
 import com.syberry.poc.data.converter.DataConverter;
 import com.syberry.poc.data.database.entity.Document;
+import com.syberry.poc.data.database.entity.PedestrianBicyclist;
 import com.syberry.poc.data.service.DocumentTypeConverter;
 import com.syberry.poc.data.service.SavingDataService;
 import java.util.List;
@@ -19,12 +20,15 @@ public class PedestrianBicyclistConverter implements DocumentTypeConverter {
   private final DataConverter dataConverter;
 
   @Override
-  public void save(List<Map<String, String>> proceededDocument, Document document) {
+  public int save(List<Map<String, String>> proceededDocument, Document document) {
+    List<PedestrianBicyclist> entities = dataConverter.convertToPedestrianBicyclistList(
+        proceededDocument, document);
     savingDataService.savePedestrianBicyclist(
         dataConverter.convertToPedestrianBicyclistList(proceededDocument, document)
     );
     savingDataService.savePedestrianBicyclistValues(
         dataConverter.convertToPedestrianBicyclistValuesList(proceededDocument)
     );
+    return entities.size();
   }
 }

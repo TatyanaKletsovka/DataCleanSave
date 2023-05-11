@@ -54,6 +54,14 @@ public interface PedestrianBicyclistRepository extends JpaRepository<PedestrianB
   void deleteByDocumentId(Long id);
 
   /**
+   * Returns pedestrianBicyclist entity with the specified id.
+   *
+   * @param id the id of the entity to return.
+   * @return pedestrianBicyclist entity.
+   */
+  PedestrianBicyclist getEntityById(long id);
+
+  /**
    * Returns whether a pedestrianBicyclist data with the specified document id
    * exists in the repository.
    *

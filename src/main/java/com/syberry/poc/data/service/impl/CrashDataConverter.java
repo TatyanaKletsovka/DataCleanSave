@@ -1,6 +1,7 @@
 package com.syberry.poc.data.service.impl;
 
 import com.syberry.poc.data.converter.DataConverter;
+import com.syberry.poc.data.database.entity.CrashData;
 import com.syberry.poc.data.database.entity.Document;
 import com.syberry.poc.data.service.DocumentTypeConverter;
 import com.syberry.poc.data.service.SavingDataService;
@@ -19,9 +20,10 @@ public class CrashDataConverter implements DocumentTypeConverter {
   private final DataConverter dataConverter;
 
   @Override
-  public void save(List<Map<String, String>> proceededDocument, Document document) {
-    savingDataService.saveCrashData(
-        dataConverter.convertToCrashDataList(proceededDocument, document)
-    );
+  public int save(List<Map<String, String>> proceededDocument, Document document) {
+    List<CrashData> entities = dataConverter.convertToCrashDataList(proceededDocument, document);
+    savingDataService.saveCrashData(entities);
+    return entities.size();
+
   }
 }

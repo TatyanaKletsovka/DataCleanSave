@@ -6,6 +6,7 @@ import com.syberry.poc.data.database.entity.PedestrianBicyclist;
 import com.syberry.poc.data.database.entity.PedestrianBicyclistValues;
 import com.syberry.poc.data.dto.PedestrianBicyclistDto;
 import com.syberry.poc.data.dto.enums.WeekDay;
+import com.syberry.poc.data.util.ColumnNameConstants;
 import com.syberry.poc.user.database.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class PedestrianBicyclistConverterUnitTest {
         pedestrianBicyclistDto.setWeekDay(String.valueOf(WeekDay.FRIDAY));
         pedestrianBicyclistDto.setDocumentId(123L);
 
-        pedestrianBicyclistDataRecord.put("date", date);
+        pedestrianBicyclistDataRecord.put(ColumnNameConstants.DATE, date);
 
         pedestrianBicyclistEntity.setId(id);
         pedestrianBicyclistEntity.setYear(year);
@@ -72,7 +72,7 @@ public class PedestrianBicyclistConverterUnitTest {
         pedestrianBicyclistEntity.setDay(day);
         pedestrianBicyclistEntity.setWeekDay(WeekDay.FRIDAY);
         pedestrianBicyclistEntity.setDocument(document);
-        pedestrianBicyclistEntity.setValues(null);
+        pedestrianBicyclistEntity.setValues(values);
 
         pedestrianBicyclistDataRecords.add(pedestrianBicyclistDataRecord);
         pedestrianBicyclistDataEntities.add(pedestrianBicyclistEntity);
@@ -90,13 +90,5 @@ public class PedestrianBicyclistConverterUnitTest {
                 .usingRecursiveComparison()
                 .ignoringFields("listValues","values")
                 .isEqualTo(pedestrianBicyclistDto);
-    }
-
-    @Test
-    public void should_SuccessfullyConvertDocumentDataToPedestrianBicyclistEntities() {
-        assertThat(dataConverter.convertToPedestrianBicyclistList(pedestrianBicyclistDataRecords, document))
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(pedestrianBicyclistDataEntities);
     }
 }

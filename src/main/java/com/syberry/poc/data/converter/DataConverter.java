@@ -1,5 +1,7 @@
 package com.syberry.poc.data.converter;
 
+import static com.syberry.poc.data.util.HashCalculator.calculateHash;
+
 import com.syberry.poc.data.database.entity.CrashData;
 import com.syberry.poc.data.database.entity.Document;
 import com.syberry.poc.data.database.entity.PedestrianBicyclist;
@@ -15,8 +17,10 @@ import com.syberry.poc.data.dto.enums.Direction;
 import com.syberry.poc.data.dto.enums.InjuryType;
 import com.syberry.poc.data.dto.enums.WeekDay;
 import com.syberry.poc.data.dto.enums.Weekend;
-import com.syberry.poc.exception.DateParseException;
+import com.syberry.poc.data.util.ColumnNameConstants;
+import com.syberry.poc.data.util.PatternConstants;
 import com.syberry.poc.user.database.entity.User;
+import java.lang.String;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,12 +36,16 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
 
 /**
  * A component that provides converting methods for the Data entities.
  */
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class DataConverter {
   private final PedestrianBicyclistRepository pedestrianBicyclistRepository;
@@ -156,9 +164,11 @@ public class DataConverter {
       Document document) {
     return documentData.stream().map(documentRow -> {
       InjuryType injuryType = null;
-      if (documentRow.get("injury_type") != null) {
-        injuryType = InjuryType.valueOf(documentRow.get("injury_type").toUpperCase()
-          .replaceAll("[-/\\s]+", "_"));
+      if (documentRow.get(ColumnNameConstants.INJURY_TYPE) != null) {
+        injuryType = InjuryType.valueOf(documentRow.get(ColumnNameConstants.INJURY_TYPE)
+            .toUpperCase()
+            .replaceAll(PatternConstants.REPLACEMENT_PATTERN,
+                PatternConstants.REPLACE_WITH_PATTERN));
       }
       return convertToCrashData(documentRow, injuryType, document);
     }).collect(Collectors.toList());
@@ -174,18 +184,24 @@ public class DataConverter {
    */
   private CrashData convertToCrashData(
       Map<String, String> documentRow, InjuryType injuryType, Document document) {
+    String collisionType = documentRow.get(ColumnNameConstants.COLLISION_TYPE);
+    String primaryFactor = documentRow.get(ColumnNameConstants.PRIMARY_FACTOR);
+    String reportedLocation = documentRow.get(ColumnNameConstants.REPORTED_LOCATION);
     return CrashData.builder()
-        .year(Integer.parseInt(documentRow.get("year")))
-        .month(Integer.parseInt(documentRow.get("month")))
-        .day(Integer.parseInt(documentRow.get("day")))
-        .hour(Integer.parseInt(documentRow.get("hour")))
-        .weekend(Weekend.valueOf(documentRow.get("weekend").toUpperCase()))
-        .collisionType(documentRow.get("collision_type"))
-        .primaryFactor(documentRow.get("primary_factor"))
+        .year(Integer.parseInt(documentRow.get(ColumnNameConstants.YEAR)))
+        .month(Integer.parseInt(documentRow.get(ColumnNameConstants.MONTH)))
+        .day(Integer.parseInt(documentRow.get(ColumnNameConstants.DAY)))
+        .hour(Integer.parseInt(documentRow.get(ColumnNameConstants.HOUR)))
+        .weekend(Weekend.valueOf(documentRow.get(ColumnNameConstants.WEEKEND).toUpperCase()))
+        .collisionType(collisionType)
+        .collisionTypeHash(calculateHash(collisionType))
+        .primaryFactor(primaryFactor)
+        .primaryFactorHash(calculateHash(primaryFactor))
         .injuryType(injuryType)
-        .reportedLocation(documentRow.get("reported_location"))
-        .latitude(Float.parseFloat(documentRow.get("latitude")))
-        .longitude(Float.parseFloat(documentRow.get("longitude")))
+        .reportedLocation(reportedLocation)
+        .reportedLocationHash(calculateHash(reportedLocation))
+        .latitude(parseFloat(documentRow.get(ColumnNameConstants.LATITUDE)))
+        .longitude(parseFloat(documentRow.get(ColumnNameConstants.LONGITUDE)))
         .document(document)
         .build();
   }
@@ -212,22 +228,39 @@ public class DataConverter {
    * @return the Traffic entity
    */
   private Traffic convertToTraffic(Map<String, String> documentRow, Document document) {
+    String county = documentRow.get(ColumnNameConstants.COUNTY);
+    String community = documentRow.get(ColumnNameConstants.COMMUNITY);
+    String onRoad = documentRow.get(ColumnNameConstants.ON);
+    String fromRoad = documentRow.get(ColumnNameConstants.FROM);
+    String toRoad = documentRow.get(ColumnNameConstants.TO);
+    String approach = documentRow.get(ColumnNameConstants.APPROACH);
+    String at = documentRow.get(ColumnNameConstants.AT);
+    String directions = documentRow.get(ColumnNameConstants.DIRECTIONS);
     return Traffic.builder()
-        .county(documentRow.get("county"))
-        .community(documentRow.get("community"))
-        .onRoad(documentRow.get("on"))
-        .fromRoad(documentRow.get("from"))
-        .toRoad(documentRow.get("to"))
-        .approach(documentRow.get("approach"))
-        .at(documentRow.get("at"))
-        .direction(Direction.valueOf(documentRow.get("dir")
+        .county(county)
+        .countyHash(calculateHash(county))
+        .community(community)
+        .communityHash(calculateHash(community))
+        .onRoad(onRoad)
+        .onRoadHash(calculateHash(onRoad))
+        .fromRoad(fromRoad)
+        .fromRoadHash(calculateHash(fromRoad))
+        .toRoad(toRoad)
+        .toRoadHash(calculateHash(toRoad))
+        .approach(approach)
+        .approachHash(calculateHash(approach))
+        .at(at)
+        .atHash(calculateHash(at))
+        .direction(Direction.valueOf(documentRow.get(ColumnNameConstants.DIR)
             .replace("1", "one")
             .replace("2", "two")
             .toUpperCase()
-            .replaceAll("[-/\\s]+", "_")))
-        .directions(documentRow.get("directions"))
-        .latitude(Float.parseFloat(documentRow.get("latitude")))
-        .longitude(Float.parseFloat(documentRow.get("longitude")))
+            .replaceAll(PatternConstants.REPLACEMENT_PATTERN,
+                PatternConstants.REPLACE_WITH_PATTERN)))
+        .directions(directions)
+        .directionsHash(calculateHash(directions))
+        .latitude(parseFloat(documentRow.get(ColumnNameConstants.LATITUDE)))
+        .longitude(parseFloat(documentRow.get(ColumnNameConstants.LONGITUDE)))
         .document(document)
         .build();
   }
@@ -240,17 +273,29 @@ public class DataConverter {
    * @return the list of PedestrianBicyclist entities.
    */
   public List<PedestrianBicyclist> convertToPedestrianBicyclistList(
-      List<Map<String, String>> documentData, Document document) {
+      List<Map<String, String>> documentData,
+      Document document) {
+    List<PedestrianBicyclist> entities = new ArrayList<>();
     Set<String> uniqueDates = new HashSet<>();
-    return documentData.stream()
-      .map(documentRow -> documentRow.get("date"))
-      .filter(dateValue -> !uniqueDates.contains(dateValue))
-      .map(dateValue -> {
-        uniqueDates.add(dateValue);
-        return getDateValues(dateValue);
-      })
-      .map(dateValues -> convertToPedestrianBicyclist(dateValues, document))
-      .collect(Collectors.toList());
+
+    for (Map<String, String> documentRow : documentData) {
+      String dateValue = documentRow.get(ColumnNameConstants.DATE);
+
+      if (uniqueDates.contains(dateValue)) {
+        continue;
+      }
+      Map<String, Integer> dateValues;
+      try {
+        dateValues = convertToDateValues(dateValue);
+      } catch (ParseException e) {
+        log.info(String.format("Invalid data: %s", dateValue));
+        continue;
+      }
+      entities.add(convertToPedestrianBicyclist(dateValues, document));
+      uniqueDates.add(dateValue);
+    }
+
+    return entities;
   }
 
   /**
@@ -264,10 +309,10 @@ public class DataConverter {
       Map<String, Integer> documentRow, Document document) {
     WeekDay[] weekDays = WeekDay.values();
     return PedestrianBicyclist.builder()
-        .year(documentRow.get("year"))
-        .month(documentRow.get("month"))
-        .day(documentRow.get("day"))
-        .weekDay(weekDays[documentRow.get("weekDay") - 1])
+        .year(documentRow.get(ColumnNameConstants.YEAR))
+        .month(documentRow.get(ColumnNameConstants.MONTH))
+        .day(documentRow.get(ColumnNameConstants.DAY))
+        .weekDay(weekDays[documentRow.get(ColumnNameConstants.WEEKDAY) - 1])
         .document(document)
         .build();
   }
@@ -283,19 +328,25 @@ public class DataConverter {
     List<PedestrianBicyclistValues> entities = new ArrayList<>();
 
     for (Map<String, String> documentRow : documentData) {
-      String dateValue = documentRow.get("date");
+      String dateValue = documentRow.get(ColumnNameConstants.DATE);
 
-      Map<String, Integer> dateValues = getDateValues(dateValue);
+      Map<String, Integer> dateValues = null;
+      try {
+        dateValues = convertToDateValues(dateValue);
+      } catch (ParseException e) {
+        log.info(String.format("Invalid data: %s", dateValue));
+        continue;
+      }
 
-      int dayOfWeek = dateValues.get("weekDay");
+      int dayOfWeek = dateValues.get(ColumnNameConstants.WEEKDAY);
       WeekDay[] weekDays = WeekDay.values();
       WeekDay weekDay = weekDays[dayOfWeek - 1];
 
       Optional<PedestrianBicyclist> pedestrianBicyclist = pedestrianBicyclistRepository
           .findTopByYearAndMonthAndDayAndWeekDayOrderByIdDesc(
-              dateValues.get("year"),
-              dateValues.get("month"),
-              dateValues.get("day"),
+              dateValues.get(ColumnNameConstants.YEAR),
+              dateValues.get(ColumnNameConstants.MONTH),
+              dateValues.get(ColumnNameConstants.DAY),
               weekDay
           );
 
@@ -313,9 +364,13 @@ public class DataConverter {
    */
   private PedestrianBicyclistValues convertToPedestrianBicyclistValue(
       Map<String, String> documentRow, PedestrianBicyclist pedestrianBicyclist) {
+    String columnName = documentRow.get(ColumnNameConstants.COLUMN_NAME);
+    String value = documentRow.get(ColumnNameConstants.COLUMN_VALUE);
     return PedestrianBicyclistValues.builder()
-        .columnName(documentRow.get("column_name"))
-        .value(documentRow.get("column_value"))
+        .columnName(columnName)
+        .columnNameHash(calculateHash(columnName))
+        .value(value)
+        .valueHash(calculateHash(value))
         .pedestrianBicyclist(pedestrianBicyclist)
         .build();
   }
@@ -340,24 +395,30 @@ public class DataConverter {
    * @param dateValue the date value.
    * @return the map of date values: year, month, day, weekday.
    */
-  private static Map<String, Integer> getDateValues(String dateValue) {
+  private static Map<String, Integer> convertToDateValues(String dateValue) throws ParseException {
     Map<String, Integer> dateValues;
-    try {
-      SimpleDateFormat format = new SimpleDateFormat("EEE, MMM dd, yyyy", Locale.US);
-      format.setTimeZone(TimeZone.getTimeZone("UTC"));
-      Date date = format.parse(dateValue);
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(date);
+    SimpleDateFormat format = new SimpleDateFormat("EEE, MMM dd, yyyy", Locale.US);
+    format.setTimeZone(TimeZone.getTimeZone("UTC"));
+    Date date = format.parse(dateValue);
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
 
-      dateValues = new HashMap<>();
-      dateValues.put("year", calendar.get(Calendar.YEAR));
-      dateValues.put("month", calendar.get(Calendar.MONTH) + 1);
-      dateValues.put("day", calendar.get(Calendar.DAY_OF_MONTH));
-      dateValues.put("weekDay", calendar.get(Calendar.DAY_OF_WEEK));
-    } catch (ParseException ignored) {
-      throw new DateParseException("An error occurred on parsing date string " + dateValue);
-    }
+    dateValues = new HashMap<>();
+    dateValues.put(ColumnNameConstants.YEAR, calendar.get(Calendar.YEAR));
+    dateValues.put(ColumnNameConstants.MONTH, calendar.get(Calendar.MONTH) + 1);
+    dateValues.put(ColumnNameConstants.DAY, calendar.get(Calendar.DAY_OF_MONTH));
+    dateValues.put(ColumnNameConstants.WEEKDAY, calendar.get(Calendar.DAY_OF_WEEK));
 
     return dateValues;
+  }
+
+  /**
+   * Convert coordinate from string Float.
+   *
+   * @param coordinate the coordinate value
+   * @return Float coordinate or null in string is invalid
+   */
+  private Float parseFloat(String coordinate) {
+    return !StringUtils.isBlank(coordinate) ? Float.parseFloat(coordinate) : null;
   }
 }

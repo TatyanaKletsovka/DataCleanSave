@@ -11,6 +11,7 @@ import com.syberry.poc.data.service.DataMapperService;
 import com.syberry.poc.data.service.DataProcessingAlgorithmsService;
 import com.syberry.poc.data.service.DocumentConverterService;
 import com.syberry.poc.data.service.DocumentTypeConverter;
+import com.syberry.poc.data.service.SavingDataService;
 import com.syberry.poc.exception.FileReadingException;
 import com.syberry.poc.exception.ValidationException;
 import com.syberry.poc.user.database.entity.User;
@@ -36,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CsvProcessingServiceImpl implements CsvProcessingService {
   private final DataConverter dataConverter;
+  private final SavingDataService savingDataService;
   private final DataProcessingAlgorithmsService dataProcessingAlgorithmsService;
   private final DataMapperService dataMapperService;
   private final DocumentConverterService documentConverterService;
@@ -64,10 +66,9 @@ public class CsvProcessingServiceImpl implements CsvProcessingService {
     User user = getCurrentUser();
     Document document = dataConverter.convertToDocument(user, parsedDocument.size());
     documentRepository.save(document);
+    int uploadedDocumentSize = saveDocumentDataByType(fileName, proceededDocument, document);
 
-    saveDocumentDataByType(fileName, proceededDocument, document);
-
-    return new UploadReportDto(parsedDocument.size(), proceededDocument.size());
+    return new UploadReportDto(parsedDocument.size(), uploadedDocumentSize);
   }
 
   /**
@@ -84,6 +85,8 @@ public class CsvProcessingServiceImpl implements CsvProcessingService {
       return new ArrayList<>(csvParser.getRecords());
     } catch (IOException ioException) {
       throw new FileReadingException("An error occurred while reading file: ", ioException);
+    } catch (IllegalArgumentException e) {
+      throw new ValidationException(String.format("Incorrect header: %s", e));
     }
   }
 
@@ -96,7 +99,7 @@ public class CsvProcessingServiceImpl implements CsvProcessingService {
     return userRepository.findByIdIfExists((long) 1);
   }
 
-  private void saveDocumentDataByType(
+  private int saveDocumentDataByType(
       String fileName, List<Map<String, String>> proceededDocument,
       Document document) {
     String convertExceptionMessage = "Document type is not supported";
@@ -112,6 +115,6 @@ public class CsvProcessingServiceImpl implements CsvProcessingService {
       throw new ValidationException(convertExceptionMessage);
     }
 
-    documentMapConverter.get(documentType).save(proceededDocument, document);
+    return documentMapConverter.get(documentType).save(proceededDocument, document);
   }
 }

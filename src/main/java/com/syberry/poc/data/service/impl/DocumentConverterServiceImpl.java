@@ -1,12 +1,13 @@
 package com.syberry.poc.data.service.impl;
 
 import com.syberry.poc.data.service.DocumentConverterService;
-import com.syberry.poc.data.util.Constants;
+import com.syberry.poc.data.util.ColumnNameConstants;
+import com.syberry.poc.data.util.FileNameConstants;
+import com.syberry.poc.data.util.PatternConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVRecord;
@@ -31,7 +32,7 @@ public class DocumentConverterServiceImpl implements DocumentConverterService {
       List<CSVRecord> documentData) {
     List<Map<String, String>> convertedDocument;
 
-    if (fileName.contains(Constants.pedestrianDocument)) {
+    if (fileName.contains(FileNameConstants.pedestrianDocument)) {
       convertedDocument = convertPedestrianDocument(documentData);
     } else {
       convertedDocument = convertDefaultDocument(documentData);
@@ -53,48 +54,38 @@ public class DocumentConverterServiceImpl implements DocumentConverterService {
       Map<String, String> rowMap = clearHeaders(row.toMap());
       Map<String, String> convertedRowData = new HashMap<>();
 
-      String[] staticData = getStaticData(rowMap, convertedRowData);
+      String staticDataHeader = "";
+      String staticDataValue = "";
 
-      String staticDataHeader = staticData[0];
-      String staticDataValue = staticData[1];
+      for (Map.Entry<String, String> rowValue : rowMap.entrySet()) {
+        String columnName = rowValue.getKey();
+        String columnValue = rowValue.getValue();
 
-      convertedDocument = convertedRowData.entrySet().stream()
-        .map(entry -> {
-          String newColumnName = entry.getKey();
-          String newColumnValue = entry.getValue();
+        if (columnName.toLowerCase().contains("time")) {
+          staticDataHeader = "full_date";
+          staticDataValue = columnValue;
+        } else if (columnName.toLowerCase().contains(ColumnNameConstants.DATE)) {
+          staticDataHeader = ColumnNameConstants.DATE;
+          staticDataValue = columnValue;
+        } else if (!columnValue.isBlank()) {
+          convertedRowData.put(columnName, columnValue);
+        }
+      }
 
-          Map<String, String> rowValues = new HashMap<>();
-          rowValues.put(staticDataHeader, staticDataValue);
-          rowValues.put("column_name", newColumnName);
-          rowValues.put("column_value", newColumnValue);
+      for (Map.Entry<String, String> rowValue : convertedRowData.entrySet()) {
+        String newColumnName = rowValue.getKey();
+        String newColumnValue = rowValue.getValue();
 
-          return rowValues;
-        })
-        .collect(Collectors.toList());
+        Map<String, String> rowValues = new HashMap<>();
+        rowValues.put(staticDataHeader, staticDataValue);
+        rowValues.put(ColumnNameConstants.COLUMN_NAME, newColumnName);
+        rowValues.put(ColumnNameConstants.COLUMN_VALUE, newColumnValue);
+
+        convertedDocument.add(rowValues);
+      }
     }
 
     return convertedDocument;
-  }
-
-  private String[] getStaticData(Map<String, String> rowMap, Map<String, String> convertedRowData) {
-    return rowMap.entrySet().stream()
-        .filter(entry -> entry.getValue() != null && !entry.getValue().isBlank())
-        .map(entry -> {
-          String columnName = entry.getKey().toLowerCase();
-          String columnValue = entry.getValue();
-
-          if (columnName.contains("time")) {
-            return new String[]{"full_date", columnValue};
-          } else if (columnName.contains("date")) {
-            return new String[]{"date", columnValue};
-          } else {
-            convertedRowData.put(columnName, columnValue);
-            return null;
-          }
-        })
-        .filter(Objects::nonNull)
-        .findFirst()
-        .orElse(new String[]{"", ""});
   }
 
   /**
@@ -118,8 +109,10 @@ public class DocumentConverterServiceImpl implements DocumentConverterService {
   private Map<String, String> clearHeaders(Map<String, String> convertedDocument) {
     return convertedDocument.entrySet().stream()
       .collect(Collectors.toMap(
-        entry -> entry.getKey().trim().toLowerCase().replaceAll("\\s+", "_")
-          .replaceAll("[^\\w_]", ""),
+        entry -> entry.getKey().trim().toLowerCase()
+            .replaceAll(PatternConstants.SPACES_PATTERN, PatternConstants.REPLACE_WITH_PATTERN)
+            .replaceAll(PatternConstants.HEADER_REPLACEMENT_PATTERN,
+                PatternConstants.REPLACE_CLEAN_PATTERN),
         Map.Entry::getValue
       ));
   }
