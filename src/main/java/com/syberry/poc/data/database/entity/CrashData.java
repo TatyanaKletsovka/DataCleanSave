@@ -30,7 +30,7 @@ import lombok.Setter;
 public class CrashData implements DataEntityInterface {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
   @NotNull
   private Long id;

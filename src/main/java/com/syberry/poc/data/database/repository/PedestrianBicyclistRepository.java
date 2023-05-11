@@ -1,7 +1,9 @@
 package com.syberry.poc.data.database.repository;
 
 import com.syberry.poc.data.database.entity.PedestrianBicyclist;
+import com.syberry.poc.data.dto.enums.WeekDay;
 import com.syberry.poc.exception.EntityNotFoundException;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +18,6 @@ public interface PedestrianBicyclistRepository extends JpaRepository<PedestrianB
    * and throws an EntityNotFoundException if it does not exist.
    *
    * @param id the id of the pedestrianBicyclist data to find
-   * @return the pedestrianBicyclist data if it exists
    * @throws EntityNotFoundException if the pedestrianBicyclist data with this id does not exist
    */
   default void findByIdIfExists(Long id) {
@@ -59,4 +60,16 @@ public interface PedestrianBicyclistRepository extends JpaRepository<PedestrianB
    *     false otherwise
    */
   boolean existsByDocumentId(Long id);
+
+  /**
+   * Returns a top record found filtered by params.
+   *
+   * @param year a year field value.
+   * @param month a month field value.
+   * @param dayOfMonth a dayOfMonth field value.
+   * @param weekDay a weekDay field value.
+   * @return PedestrianBicyclist entity found.
+   */
+  Optional<PedestrianBicyclist> findTopByYearAndMonthAndDayAndWeekDayOrderByIdDesc(
+      int year, int month, int dayOfMonth, WeekDay weekDay);
 }

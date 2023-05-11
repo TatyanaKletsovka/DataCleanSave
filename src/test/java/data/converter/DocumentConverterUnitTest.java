@@ -19,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DocumentConverterUnitTest {
     @InjectMocks
     private DataConverter dataConverter;
-    private Document document = new Document();
-    private DocumentDto documentDto = new DocumentDto();
-    private User user = new User();
-    private Role role = new Role(3L, RoleName.USER);
+    private final Document document = new Document();
+    private final DocumentDto documentDto = new DocumentDto();
+    private final User user = new User();
+    private final Role role = new Role(3L, RoleName.USER);
     @BeforeEach
     public void setup() {
         Long id = 123456789L;
@@ -55,5 +55,13 @@ public class DocumentConverterUnitTest {
             assertThat(dataConverter.convertToDocumentDto(document))
                     .usingRecursiveComparison()
                     .isEqualTo(documentDto);
+        }
+
+        @Test
+        public void should_SuccessfullyConvertDataToDocumentEntity() {
+            assertThat(dataConverter.convertToDocument(user, 3))
+                    .usingRecursiveComparison()
+                    .ignoringFields("dateTime", "id")
+                    .isEqualTo(document);
         }
 }

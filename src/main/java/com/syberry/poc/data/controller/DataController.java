@@ -4,6 +4,8 @@ import com.syberry.poc.data.dto.CrashDataDto;
 import com.syberry.poc.data.dto.DocumentDto;
 import com.syberry.poc.data.dto.PedestrianBicyclistDto;
 import com.syberry.poc.data.dto.TrafficDto;
+import com.syberry.poc.data.dto.UploadReportDto;
+import com.syberry.poc.data.service.CsvProcessingService;
 import com.syberry.poc.data.service.DataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * A controller for handling data-related HTTP requests.
@@ -25,8 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/data")
 public class DataController {
-
   private final DataService dataService;
+  private final CsvProcessingService csvProcessingService;
 
   /**
    * Returns a paginated list of all traffic data records in the system.
@@ -146,6 +151,13 @@ public class DataController {
   public void deleteCrashDataByDocumentId(@PathVariable("id") Long id) {
     log.info("DELETE-request: deleting crash data by document id: {}", id);
     dataService.deleteCrashDataByDocumentId(id);
+  }
+
+  @ResponseStatus(HttpStatus.CREATED)
+  @PostMapping("/csv")
+  public UploadReportDto processCsv(@RequestParam("file") MultipartFile file) {
+    log.info("POST-request: uploading document");
+    return csvProcessingService.processCsvDocument(file);
   }
 }
 

@@ -15,7 +15,6 @@ public interface CrashDataRepository extends JpaRepository<CrashData, Long> {
    * Finds a crash data by its id and throws an EntityNotFoundException if it does not exist.
    *
    * @param id the id of the crash data to find
-   * @return the crash data if it exists
    * @throws EntityNotFoundException if the crash data with this id does not exist
    */
   default void findByIdIfExists(Long id) {

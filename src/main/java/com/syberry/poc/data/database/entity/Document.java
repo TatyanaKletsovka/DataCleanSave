@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +29,7 @@ import lombok.Setter;
 public class Document implements DataEntityInterface {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
   @NotNull
   private Long id;
@@ -40,4 +41,9 @@ public class Document implements DataEntityInterface {
   private User user;
   @NotNull
   private int processedRows;
+
+  @PrePersist
+  public void prePersist() {
+    dateTime = LocalDateTime.now();
+  }
 }
