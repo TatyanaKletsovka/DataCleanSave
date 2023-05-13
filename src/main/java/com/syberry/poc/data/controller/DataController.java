@@ -1,9 +1,12 @@
 package com.syberry.poc.data.controller;
 
 import com.syberry.poc.data.dto.CrashDataDto;
+import com.syberry.poc.data.dto.CrashDataFilter;
 import com.syberry.poc.data.dto.DocumentDto;
 import com.syberry.poc.data.dto.PedestrianBicyclistDto;
+import com.syberry.poc.data.dto.PedestrianBicyclistFilter;
 import com.syberry.poc.data.dto.TrafficDto;
+import com.syberry.poc.data.dto.TrafficFilter;
 import com.syberry.poc.data.dto.UploadReportDto;
 import com.syberry.poc.data.service.CsvProcessingService;
 import com.syberry.poc.data.service.DataService;
@@ -37,37 +40,41 @@ public class DataController {
   /**
    * Returns a paginated list of all traffic data records in the system.
    *
+   * @param filter The filter used to find Traffic.
    * @param pageable is pagination parameter
    * @return page object of all traffic data records
    */
   @GetMapping("/traffic")
-  public Page<TrafficDto> findAllTraffic(Pageable pageable) {
+  public Page<TrafficDto> findAllTraffic(TrafficFilter filter, Pageable pageable) {
     log.info("GET-request: getting all traffic objects");
-    return dataService.findAllTraffic(pageable);
+    return dataService.findAllTraffic(filter, pageable);
   }
 
   /**
    * Returns a paginated list of all pedestrian and bicyclist data records in the system.
    *
+   * @param filter The filter used to find PedestrianBicyclist.
    * @param pageable is pagination parameter
    * @return page object of all pedestrian and bicyclist data records
    */
   @GetMapping("/pedestrian-and-bicyclist")
-  public Page<PedestrianBicyclistDto> findAllPedestrianAndBicyclist(Pageable pageable) {
+  public Page<PedestrianBicyclistDto> findAllPedestrianAndBicyclist(
+      PedestrianBicyclistFilter filter, Pageable pageable) {
     log.info("GET-request: getting all pedestrian and bicyclist objects");
-    return dataService.findAllPedestrianAndBicyclist(pageable);
+    return dataService.findAllPedestrianAndBicyclist(filter, pageable);
   }
 
   /**
    * Returns a paginated list of all crash data records in the system.
    *
+   * @param filter The filter used to find CrashData.
    * @param pageable is pagination parameter
    * @return page object of all crash data records
    */
   @GetMapping("/crash-data")
-  public Page<CrashDataDto> findAllCrashData(Pageable pageable) {
+  public Page<CrashDataDto> findAllCrashData(CrashDataFilter filter, Pageable pageable) {
     log.info("GET-request: getting all crash data objects");
-    return dataService.findAllCrashData(pageable);
+    return dataService.findAllCrashData(filter, pageable);
   }
 
   /**

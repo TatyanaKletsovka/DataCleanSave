@@ -1,13 +1,25 @@
 package data.service;
 
 import com.syberry.poc.data.converter.DataConverter;
+import com.syberry.poc.data.database.entity.CrashData;
 import com.syberry.poc.data.database.entity.Document;
+import com.syberry.poc.data.database.entity.PedestrianBicyclist;
+import com.syberry.poc.data.database.entity.Traffic;
 import com.syberry.poc.data.database.repository.CrashDataRepository;
 import com.syberry.poc.data.database.repository.DocumentRepository;
 import com.syberry.poc.data.database.repository.PedestrianBicyclistRepository;
 import com.syberry.poc.data.database.repository.TrafficRepository;
+import com.syberry.poc.data.dto.CrashDataDto;
+import com.syberry.poc.data.dto.CrashDataFilter;
 import com.syberry.poc.data.dto.DocumentDto;
+import com.syberry.poc.data.dto.PedestrianBicyclistDto;
+import com.syberry.poc.data.dto.PedestrianBicyclistFilter;
+import com.syberry.poc.data.dto.TrafficDto;
+import com.syberry.poc.data.dto.TrafficFilter;
 import com.syberry.poc.data.service.impl.DataServiceImpl;
+import com.syberry.poc.data.specification.CrashDataSpecification;
+import com.syberry.poc.data.specification.PedestrianBicyclistSpecification;
+import com.syberry.poc.data.specification.TrafficSpecification;
 import com.syberry.poc.user.database.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import java.time.LocalDateTime;
@@ -42,32 +55,51 @@ public class DataServiceTest {
     private CrashDataRepository crashDataRepository;
     @Mock
     private DataConverter dataConverter;
+    @Mock
+    private TrafficSpecification trafficSpecification;
+    @Mock
+    private CrashDataSpecification crashDataSpecification;
+    @Mock
+    private PedestrianBicyclistSpecification bicyclistSpecification;
     private Document document = new Document(123L, LocalDateTime.now(), new User(), 3 );
     private DocumentDto documentDto = new DocumentDto();
 
     private Long id = 1L;
+    private final PageRequest pageRequest = PageRequest.of(0, 20);
 
     @Test
     public void should_SuccessfullyReturnAllTraffic() {
-        when(trafficRepository.findAll(PageRequest.of(0, 20)))
-                .thenReturn(new PageImpl<>(List.of()));
-        assertEquals(new PageImpl<>(List.of()),
-                dataService.findAllTraffic(PageRequest.of(0, 20)));
+        Page<Traffic> expectedTraffic = new PageImpl<>(List.of());
+        Page<TrafficDto> expectedTrafficDto = new PageImpl<>(List.of());
+        when(trafficRepository.findAll(
+            trafficSpecification.buildTrafficSpecification(any(TrafficFilter.class)), pageRequest))
+            .thenReturn(expectedTraffic);
+        Page<TrafficDto> actualTrafficDto = dataService.findAllTraffic(
+            any(TrafficFilter.class), pageRequest);
+        assertEquals(expectedTrafficDto, actualTrafficDto);
     }
     @Test
     public void should_SuccessfullyReturnAllPedestrianAndBicyclist() {
-        when(pedestrianBicyclistRepository.findAll(PageRequest.of(0, 20)))
-                .thenReturn(new PageImpl<>(List.of()));
-        assertEquals(new PageImpl<>(List.of()),
-                dataService.findAllPedestrianAndBicyclist(PageRequest.of(0, 20)));
+        Page<PedestrianBicyclist> expectedBicyclist = new PageImpl<>(List.of());
+        Page<PedestrianBicyclistDto> expectedBicyclistDto = new PageImpl<>(List.of());
+        when(pedestrianBicyclistRepository.findAll(
+            bicyclistSpecification.buildPedestrianBicyclistSpecification(
+                any(PedestrianBicyclistFilter.class)), pageRequest)).thenReturn(expectedBicyclist);
+        Page<PedestrianBicyclistDto> actualBicyclistDto =  dataService.findAllPedestrianAndBicyclist(
+            any(PedestrianBicyclistFilter.class), pageRequest);
+        assertEquals(expectedBicyclistDto, actualBicyclistDto);
     }
 
     @Test
     public void should_SuccessfullyReturnAllCrashData() {
-        when(crashDataRepository.findAll(PageRequest.of(0, 20)))
-                .thenReturn(new PageImpl<>(List.of()));
-        assertEquals(new PageImpl<>(List.of()),
-                dataService.findAllCrashData(PageRequest.of(0, 20)));
+        Page<CrashData> expectedCrashData = new PageImpl<>(List.of());
+        Page<CrashDataDto> expectedCrashDataDto = new PageImpl<>(List.of());
+        when(crashDataRepository.findAll(
+            crashDataSpecification.buildCrashDataSpecification(any(CrashDataFilter.class)),
+            pageRequest)).thenReturn(expectedCrashData);
+        Page<CrashDataDto> actualCrashDataDto = dataService.findAllCrashData(
+            any(CrashDataFilter.class), pageRequest);
+        assertEquals(expectedCrashDataDto, actualCrashDataDto);
     }
 
     @Test
