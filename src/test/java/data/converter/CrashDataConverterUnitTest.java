@@ -6,13 +6,13 @@ import com.syberry.poc.data.database.entity.Document;
 import com.syberry.poc.data.dto.CrashDataDto;
 import com.syberry.poc.data.dto.enums.InjuryType;
 import com.syberry.poc.data.dto.enums.Weekend;
+import com.syberry.poc.data.util.ColumnNameConstants;
 import com.syberry.poc.user.database.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,17 +74,17 @@ public class CrashDataConverterUnitTest {
         crashDataDto.setLongitude(longitude);
         crashDataDto.setDocumentId(123L);
 
-        crashDataRecord.put("year", Integer.toString(year));
-        crashDataRecord.put("month", Integer.toString(month));
-        crashDataRecord.put("day", Integer.toString(day));
-        crashDataRecord.put("hour", Integer.toString(hour));
-        crashDataRecord.put("weekend", weekend);
+        crashDataRecord.put(ColumnNameConstants.YEAR, Integer.toString(year));
+        crashDataRecord.put(ColumnNameConstants.MONTH, Integer.toString(month));
+        crashDataRecord.put(ColumnNameConstants.DAY, Integer.toString(day));
+        crashDataRecord.put(ColumnNameConstants.HOUR, Integer.toString(hour));
+        crashDataRecord.put(ColumnNameConstants.WEEKEND, weekend);
         crashDataRecord.put("injury_type", injuryType);
         crashDataRecord.put("collision_type", collisionType);
         crashDataRecord.put("primary_factor", primaryFactor);
-        crashDataRecord.put("reported_location", reportedLocation);
-        crashDataRecord.put("latitude", Float.toString(latitude));
-        crashDataRecord.put("longitude", Float.toString(longitude));
+        crashDataRecord.put(ColumnNameConstants.REPORTED_LOCATION, reportedLocation);
+        crashDataRecord.put(ColumnNameConstants.LATITUDE, Float.toString(latitude));
+        crashDataRecord.put(ColumnNameConstants.LONGITUDE, Float.toString(longitude));
 
         crashDataRecords.add(crashDataRecord);
         crashDataEntities.add(crashData);
@@ -101,7 +101,8 @@ public class CrashDataConverterUnitTest {
         public void should_SuccessfullyConvertDocumentDataToCrashDataEntities() {
             assertThat(dataConverter.convertToCrashDataList(crashDataRecords, document))
                     .usingRecursiveComparison()
-                    .ignoringFields("id")
+                    .ignoringFields("id", "primaryFactorHash",
+                        "collisionTypeHash", "reportedLocationHash")
                     .isEqualTo(crashDataEntities);
         }
 }

@@ -8,6 +8,7 @@ import com.syberry.poc.data.database.entity.Traffic;
 import com.syberry.poc.data.database.repository.CrashDataRepository;
 import com.syberry.poc.data.database.repository.DocumentRepository;
 import com.syberry.poc.data.database.repository.PedestrianBicyclistRepository;
+import com.syberry.poc.data.database.repository.PedestrianBicyclistValuesRepository;
 import com.syberry.poc.data.database.repository.TrafficRepository;
 import com.syberry.poc.data.dto.CrashDataDto;
 import com.syberry.poc.data.dto.CrashDataFilter;
@@ -53,6 +54,8 @@ public class DataServiceTest {
     private PedestrianBicyclistRepository pedestrianBicyclistRepository;
     @Mock
     private CrashDataRepository crashDataRepository;
+    @Mock
+    private PedestrianBicyclistValuesRepository pedestrianBicyclistValuesRepository;
     @Mock
     private DataConverter dataConverter;
     @Mock
@@ -131,6 +134,7 @@ public class DataServiceTest {
         doNothing().when(pedestrianBicyclistRepository).deleteById(id);
         dataService.deletePedestrianAndBicyclistById(id);
         verify(pedestrianBicyclistRepository).findByIdIfExists(id);
+        verify(pedestrianBicyclistValuesRepository).deleteByPedestrianBicyclist(pedestrianBicyclistRepository.getEntityById(id));
         verify(pedestrianBicyclistRepository).deleteById(id);
     }
 

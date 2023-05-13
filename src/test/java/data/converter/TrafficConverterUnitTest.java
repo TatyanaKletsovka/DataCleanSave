@@ -5,6 +5,7 @@ import com.syberry.poc.data.database.entity.Document;
 import com.syberry.poc.data.database.entity.Traffic;
 import com.syberry.poc.data.dto.TrafficDto;
 import com.syberry.poc.data.dto.enums.Direction;
+import com.syberry.poc.data.util.ColumnNameConstants;
 import com.syberry.poc.user.database.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,17 +74,17 @@ public class TrafficConverterUnitTest {
         trafficDto.setLongitude(longitude);
         trafficDto.setDocumentId(123L);
 
-        trafficDataRecord.put("county", county);
-        trafficDataRecord.put("community", community);
-        trafficDataRecord.put("on", onRoad);
-        trafficDataRecord.put("from", fromRoad);
-        trafficDataRecord.put("to", toRoad);
-        trafficDataRecord.put("at", at);
-        trafficDataRecord.put("approach", approach);
-        trafficDataRecord.put("directions", directions);
-        trafficDataRecord.put("dir", direction);
-        trafficDataRecord.put("latitude", Float.toString(latitude));
-        trafficDataRecord.put("longitude", Float.toString(longitude));
+        trafficDataRecord.put(ColumnNameConstants.COUNTY, county);
+        trafficDataRecord.put(ColumnNameConstants.COMMUNITY, community);
+        trafficDataRecord.put(ColumnNameConstants.ON, onRoad);
+        trafficDataRecord.put(ColumnNameConstants.FROM, fromRoad);
+        trafficDataRecord.put(ColumnNameConstants.TO, toRoad);
+        trafficDataRecord.put(ColumnNameConstants.AT, at);
+        trafficDataRecord.put(ColumnNameConstants.APPROACH, approach);
+        trafficDataRecord.put(ColumnNameConstants.DIRECTIONS, directions);
+        trafficDataRecord.put(ColumnNameConstants.DIR, direction);
+        trafficDataRecord.put(ColumnNameConstants.LATITUDE, Float.toString(latitude));
+        trafficDataRecord.put(ColumnNameConstants.LONGITUDE, Float.toString(longitude));
 
         trafficDataRecords.add(trafficDataRecord);
         trafficDataEntities.add(traffic);
@@ -102,7 +103,9 @@ public class TrafficConverterUnitTest {
         public void should_SuccessfullyConvertDocumentDataToTrafficEntities() {
             assertThat(dataConverter.convertToTrafficList(trafficDataRecords, document))
                     .usingRecursiveComparison()
-                    .ignoringFields("id")
+                .ignoringFields("id", "countyHash", "communityHash",
+                    "fromRoadHash", "directionsHash", "toRoadHash","onRoadHash","fromRoadHash",
+                    "approachHash","approachHash","atHash")
                     .isEqualTo(trafficDataEntities);
         }
 }

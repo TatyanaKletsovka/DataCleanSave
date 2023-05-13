@@ -4,6 +4,7 @@ import com.syberry.poc.data.converter.DataConverter;
 import com.syberry.poc.data.database.repository.CrashDataRepository;
 import com.syberry.poc.data.database.repository.DocumentRepository;
 import com.syberry.poc.data.database.repository.PedestrianBicyclistRepository;
+import com.syberry.poc.data.database.repository.PedestrianBicyclistValuesRepository;
 import com.syberry.poc.data.database.repository.TrafficRepository;
 import com.syberry.poc.data.dto.CrashDataDto;
 import com.syberry.poc.data.dto.CrashDataFilter;
@@ -16,6 +17,7 @@ import com.syberry.poc.data.service.DataService;
 import com.syberry.poc.data.specification.CrashDataSpecification;
 import com.syberry.poc.data.specification.PedestrianBicyclistSpecification;
 import com.syberry.poc.data.specification.TrafficSpecification;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,7 @@ public class DataServiceImpl implements DataService {
   private final DocumentRepository documentRepository;
   private final TrafficRepository trafficRepository;
   private final PedestrianBicyclistRepository pedestrianBicyclistRepository;
+  private final PedestrianBicyclistValuesRepository pedestrianBicyclistValuesRepository;
   private final CrashDataRepository crashDataRepository;
   private final DataConverter dataConverter;
   private final TrafficSpecification trafficSpecification;
@@ -101,8 +104,11 @@ public class DataServiceImpl implements DataService {
    * @param id the id of the pedestrian and bicyclist record to delete
    */
   @Override
+  @Transactional
   public void deletePedestrianAndBicyclistById(Long id) {
     pedestrianBicyclistRepository.findByIdIfExists(id);
+    pedestrianBicyclistValuesRepository.deleteByPedestrianBicyclist(
+        pedestrianBicyclistRepository.getEntityById(id));
     pedestrianBicyclistRepository.deleteById(id);
   }
 
@@ -123,6 +129,7 @@ public class DataServiceImpl implements DataService {
    * @param id the id of the document to delete
    */
   @Override
+  @Transactional
   public void deleteTrafficByDocumentId(Long id) {
     trafficRepository.existsByDocumentIdOrThrow(id);
     trafficRepository.deleteByDocumentId(id);
@@ -134,6 +141,7 @@ public class DataServiceImpl implements DataService {
    * @param id the id of the document to delete
    */
   @Override
+  @Transactional
   public void deleteCrashDataByDocumentId(Long id) {
     crashDataRepository.existsByDocumentIdOrThrow(id);
     crashDataRepository.deleteByDocumentId(id);
@@ -145,6 +153,7 @@ public class DataServiceImpl implements DataService {
    * @param id the id of the document to delete.
    */
   @Override
+  @Transactional
   public void deletePedestrianAndBicyclistByDocumentId(Long id) {
     pedestrianBicyclistRepository.existsByDocumentIdOrThrow(id);
     pedestrianBicyclistRepository.deleteByDocumentId(id);

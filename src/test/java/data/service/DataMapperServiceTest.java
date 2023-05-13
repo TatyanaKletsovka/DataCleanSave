@@ -2,6 +2,7 @@ package data.service;
 
 import com.syberry.poc.data.dto.enums.Tag;
 import com.syberry.poc.data.service.impl.DataMapperServiceImpl;
+import com.syberry.poc.data.util.ColumnNameConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,31 +41,31 @@ public class DataMapperServiceTest {
     String directions = "Northbound";
     String direction = "1-way";
 
-    documentRow.put("county", county);
-    documentRow.put("community", community);
-    documentRow.put("on", onRoad);
-    documentRow.put("from", fromRoad);
-    documentRow.put("to", toRoad);
-    documentRow.put("at", at);
-    documentRow.put("approach", approach);
-    documentRow.put("directions", directions);
-    documentRow.put("dir", direction);
-    documentRow.put("latitude", Float.toString(latitude));
-    documentRow.put("longitude", Float.toString(longitude));
+    documentRow.put(ColumnNameConstants.COUNTY, county);
+    documentRow.put(ColumnNameConstants.COMMUNITY, community);
+    documentRow.put(ColumnNameConstants.ON, onRoad);
+    documentRow.put(ColumnNameConstants.FROM, fromRoad);
+    documentRow.put(ColumnNameConstants.TO, toRoad);
+    documentRow.put(ColumnNameConstants.AT, at);
+    documentRow.put(ColumnNameConstants.APPROACH, approach);
+    documentRow.put(ColumnNameConstants.DIRECTIONS, directions);
+    documentRow.put(ColumnNameConstants.DIR, direction);
+    documentRow.put(ColumnNameConstants.LATITUDE, Float.toString(latitude));
+    documentRow.put(ColumnNameConstants.LONGITUDE, Float.toString(longitude));
 
     documentData.add(documentRow);
 
-    Tags.put("county", List.of(Tag.STRING));
-    Tags.put("community", List.of(Tag.STRING));
-    Tags.put("on", List.of(Tag.STRING, Tag.OBLIGATORY));
-    Tags.put("from", List.of(Tag.STRING, Tag.OBLIGATORY));
-    Tags.put("to", List.of(Tag.STRING, Tag.OBLIGATORY));
-    Tags.put("at", List.of(Tag.STRING));
-    Tags.put("approach", List.of(Tag.STRING));
-    Tags.put("directions", List.of(Tag.STRING));
-    Tags.put("dir", List.of(Tag.STRING));
-    Tags.put("latitude", List.of(Tag.FLOAT));
-    Tags.put("longitude", List.of(Tag.FLOAT));
+    Tags.put(ColumnNameConstants.COUNTY, List.of(Tag.STRING));
+    Tags.put(ColumnNameConstants.COMMUNITY, List.of(Tag.STRING));
+    Tags.put(ColumnNameConstants.ON, List.of(Tag.STRING, Tag.OBLIGATORY));
+    Tags.put(ColumnNameConstants.FROM, List.of(Tag.STRING, Tag.OBLIGATORY));
+    Tags.put(ColumnNameConstants.TO, List.of(Tag.STRING, Tag.OBLIGATORY));
+    Tags.put(ColumnNameConstants.AT, List.of(Tag.STRING));
+    Tags.put(ColumnNameConstants.APPROACH, List.of(Tag.STRING));
+    Tags.put(ColumnNameConstants.DIRECTIONS, List.of(Tag.STRING));
+    Tags.put(ColumnNameConstants.DIR, List.of(Tag.STRING, Tag.OBLIGATORY));
+    Tags.put(ColumnNameConstants.LATITUDE, List.of(Tag.FLOAT));
+    Tags.put(ColumnNameConstants.LONGITUDE, List.of(Tag.FLOAT));
   }
 
   @Test

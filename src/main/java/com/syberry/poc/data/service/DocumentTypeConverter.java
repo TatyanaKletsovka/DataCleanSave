@@ -8,5 +8,5 @@ import java.util.Map;
  * Service interface for document's types converting.
  */
 public interface DocumentTypeConverter {
-  void save(List<Map<String, String>> proceededDocument, Document document);
+  int save(List<Map<String, String>> proceededDocument, Document document);
 }

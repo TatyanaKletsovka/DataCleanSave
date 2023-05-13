@@ -26,6 +26,7 @@ public class GlobalExceptionHandler extends Exception {
    * @return an HTTP response entity containing the errors
    */
   @ExceptionHandler({
+      DateProcessingException.class,
       DateParseException.class,
       EntityNotFoundException.class,
       FileReadingException.class,

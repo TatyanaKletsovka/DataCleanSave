@@ -1,14 +1,14 @@
 package com.syberry.poc.data.dto.enums;
 
-import com.syberry.poc.data.util.Constants;
+import com.syberry.poc.data.util.FileNameConstants;
 
 /**
  * An enumeration of available document types to be proceeded.
  */
 public enum DocumentType {
-  PEDESTRIAN(Constants.pedestrianDocument),
-  TRAFFIC(Constants.trafficDocument),
-  CRASH(Constants.crashDocument);
+  PEDESTRIAN(FileNameConstants.pedestrianDocument),
+  TRAFFIC(FileNameConstants.trafficDocument),
+  CRASH(FileNameConstants.crashDocument);
 
   private final String type;
 

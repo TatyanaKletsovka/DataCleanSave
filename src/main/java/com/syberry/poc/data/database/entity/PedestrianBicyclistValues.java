@@ -26,9 +26,8 @@ import lombok.Setter;
 public class PedestrianBicyclistValues {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  @NotNull
   private Long id;
   @NotNull
   private String columnName;
