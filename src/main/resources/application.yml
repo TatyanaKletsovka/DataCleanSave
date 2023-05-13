@@ -13,7 +13,7 @@ spring:
       hibernate:
         globally_quoted_identifiers: true
   datasource:
-    url: 'jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_NAME}'
+    url: 'jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_NAME}?createDatabaseIfNotExist=true'
     username: '${DB_USER}'
     password: '${DB_PASS}'
     driver-class-name: com.mysql.cj.jdbc.Driver

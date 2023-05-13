@@ -1,9 +1,12 @@
 package com.syberry.poc.data.service;
 
 import com.syberry.poc.data.dto.CrashDataDto;
+import com.syberry.poc.data.dto.CrashDataFilter;
 import com.syberry.poc.data.dto.DocumentDto;
 import com.syberry.poc.data.dto.PedestrianBicyclistDto;
+import com.syberry.poc.data.dto.PedestrianBicyclistFilter;
 import com.syberry.poc.data.dto.TrafficDto;
+import com.syberry.poc.data.dto.TrafficFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,29 +19,33 @@ public interface DataService {
   /**
    * Returns a page of traffic data based on page parameters.
    *
+   * @param filter The filter used to find Traffic.
    * @param pageable The page parameters used to retrieve a specific page of results.
    * @return A Page of TrafficDto objects representing the traffic data
    *     based on the provided page parameters.
    */
-  Page<TrafficDto> findAllTraffic(Pageable pageable);
+  Page<TrafficDto> findAllTraffic(TrafficFilter filter, Pageable pageable);
 
   /**
    * Returns a page of pedestrian and bicyclist data based on page parameters.
    *
+   * @param filter The filter used to find PedestrianAndBicyclist.
    * @param pageable The page parameters used to retrieve a specific page of results.
    * @return A Page of PedestrianBicyclistDto objects representing
    *     the pedestrian and bicyclist data based on the provided page parameters.
    */
-  Page<PedestrianBicyclistDto> findAllPedestrianAndBicyclist(Pageable pageable);
+  Page<PedestrianBicyclistDto> findAllPedestrianAndBicyclist(
+      PedestrianBicyclistFilter filter, Pageable pageable);
 
   /**
    * Returns a page of crash data based on page parameters.
    *
+   * @param filter The filter used to find CrashData.
    * @param pageable The page parameters used to retrieve a specific page of results.
    * @return A Page of CrashDataDto objects representing the crash data
    *     based on the provided page parameters.
    */
-  Page<CrashDataDto> findAllCrashData(Pageable pageable);
+  Page<CrashDataDto> findAllCrashData(CrashDataFilter filter, Pageable pageable);
 
   /**
    * Deletes traffic data with provided id from the repository.

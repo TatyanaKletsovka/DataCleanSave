@@ -5,13 +5,15 @@ import com.syberry.poc.data.dto.enums.WeekDay;
 import com.syberry.poc.exception.EntityNotFoundException;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for managing pedestrian and bicyclist data in the database.
  */
 @Repository
-public interface PedestrianBicyclistRepository extends JpaRepository<PedestrianBicyclist, Long> {
+public interface PedestrianBicyclistRepository extends JpaRepository<PedestrianBicyclist, Long>,
+    JpaSpecificationExecutor<PedestrianBicyclist> {
 
   /**
    * Finds a pedestrianBicyclist data by its id

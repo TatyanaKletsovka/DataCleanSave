@@ -3,13 +3,15 @@ package com.syberry.poc.data.database.repository;
 import com.syberry.poc.data.database.entity.CrashData;
 import com.syberry.poc.exception.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for managing crash data in the database.
  */
 @Repository
-public interface CrashDataRepository extends JpaRepository<CrashData, Long> {
+public interface CrashDataRepository extends JpaRepository<CrashData, Long>,
+    JpaSpecificationExecutor<CrashData> {
 
   /**
    * Finds a crash data by its id and throws an EntityNotFoundException if it does not exist.

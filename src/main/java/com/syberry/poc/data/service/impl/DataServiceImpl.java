@@ -6,10 +6,16 @@ import com.syberry.poc.data.database.repository.DocumentRepository;
 import com.syberry.poc.data.database.repository.PedestrianBicyclistRepository;
 import com.syberry.poc.data.database.repository.TrafficRepository;
 import com.syberry.poc.data.dto.CrashDataDto;
+import com.syberry.poc.data.dto.CrashDataFilter;
 import com.syberry.poc.data.dto.DocumentDto;
 import com.syberry.poc.data.dto.PedestrianBicyclistDto;
+import com.syberry.poc.data.dto.PedestrianBicyclistFilter;
 import com.syberry.poc.data.dto.TrafficDto;
+import com.syberry.poc.data.dto.TrafficFilter;
 import com.syberry.poc.data.service.DataService;
+import com.syberry.poc.data.specification.CrashDataSpecification;
+import com.syberry.poc.data.specification.PedestrianBicyclistSpecification;
+import com.syberry.poc.data.specification.TrafficSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,43 +34,53 @@ public class DataServiceImpl implements DataService {
   private final PedestrianBicyclistRepository pedestrianBicyclistRepository;
   private final CrashDataRepository crashDataRepository;
   private final DataConverter dataConverter;
+  private final TrafficSpecification trafficSpecification;
+  private final CrashDataSpecification crashDataSpecification;
+  private final PedestrianBicyclistSpecification bicyclistSpecification;
 
   /**
    * Returns a page of traffic data based on page parameters.
    *
+   * @param filter The filter used to find Traffic.
    * @param pageable The page parameters used to retrieve a specific page of results.
    * @return A Page of TrafficDto objects representing the traffic data
    *     based on the provided page parameters.
    */
   @Override
-  public Page<TrafficDto> findAllTraffic(Pageable pageable) {
-    return trafficRepository.findAll(pageable)
+  public Page<TrafficDto> findAllTraffic(TrafficFilter filter, Pageable pageable) {
+    return trafficRepository.findAll(
+        trafficSpecification.buildTrafficSpecification(filter), pageable)
         .map(dataConverter::convertToTrafficDto);
   }
 
   /**
    * Returns a page of pedestrian and bicyclist data based on page parameters.
    *
+   * @param filter The filter used to find PedestrianBicyclist.
    * @param pageable The page parameters used to retrieve a specific page of results.
    * @return A Page of PedestrianBicyclistDto objects representing the pedestrian and bicyclist
    *     data based on the provided page parameters.
    */
   @Override
-  public Page<PedestrianBicyclistDto> findAllPedestrianAndBicyclist(Pageable pageable) {
-    return pedestrianBicyclistRepository.findAll(pageable)
+  public Page<PedestrianBicyclistDto> findAllPedestrianAndBicyclist(
+      PedestrianBicyclistFilter filter, Pageable pageable) {
+    return pedestrianBicyclistRepository.findAll(
+        bicyclistSpecification.buildPedestrianBicyclistSpecification(filter), pageable)
         .map(dataConverter::convertToPedestrianBicyclistDto);
   }
 
   /**
    * Returns a page of crash data based on page parameters.
    *
+   * @param filter The filter used to find CrashData.
    * @param pageable The page parameters used to retrieve a specific page of results.
    * @return A Page of CrashDataDto objects representing the crash data
    *     based on the provided page parameters.
    */
   @Override
-  public Page<CrashDataDto> findAllCrashData(Pageable pageable) {
-    return crashDataRepository.findAll(pageable)
+  public Page<CrashDataDto> findAllCrashData(CrashDataFilter filter, Pageable pageable) {
+    return crashDataRepository.findAll(
+        crashDataSpecification.buildCrashDataSpecification(filter), pageable)
         .map(dataConverter::convertToCrashDataDto);
   }
 
